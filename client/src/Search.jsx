@@ -4,20 +4,14 @@ import { Settings } from './Settings.jsx';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
-const searcher = new Searcher();
+const searcher = new Searcher('languagelearning');
 
 export function Search({ site, seSite, sortby }) {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [question, setQuestion] = useState(searchParams.q);
-
-  // let site = site;
-  //props.setSite(searchParams.site);
-  // let seSite = seSite;
-  //props.setSeSite(searchParams.seSite);
-  let sort = sortby;
-  //props.setSort(searchParams.sortby);
+  const [question, setQuestion] = useState('');
+  let site = props.site;
+  let sort = props.sort;
 
   const updateResults = async () => {
     if (!question) {
@@ -25,9 +19,9 @@ export function Search({ site, seSite, sortby }) {
     } //'how to --good learn chinese !-happy --expensive';
     let sq = searcher.toSearchQuery(question);
     switch (site) {
-      case 'se':
+      case 'stackexchange':
         props.setRawArticles(
-          await searcher.searchStackExchange(seSite, sq, sort)
+          await searcher.searchStackExchange('languagelearning', sq, sort)
         );
         break;
       case 'google':
@@ -41,16 +35,7 @@ export function Search({ site, seSite, sortby }) {
     // console.table(rawArticles);
   };
 
-  const handleSiteChange = async (newSite) => {
-    if (!seSite) {
-      if (newSite === 'se') {
-        seSite = prompt(
-          'What site in the Stack Exchange network to search from?',
-          'stackoverflow'
-        );
-        props.setSeSite(seSite);
-      }
-    }
+  const handleSiteChange = (newSite) => {
     props.setSite(newSite);
     site = newSite;
     console.log(seSite);
